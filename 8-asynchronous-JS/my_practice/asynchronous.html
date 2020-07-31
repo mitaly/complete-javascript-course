@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Asynchronous JavaScript</title>
+</head>
+<body>
+    <h1>Asynchronous JavaScript</h1>
+    <script>
+        // const second = () => {
+        //     setTimeout(() => {
+        //         console.log("The second");
+        //     }, 2000);
+        // }
+        // const first = () => {
+        //     console.log('The First');
+        //     second();
+        //     console.log('The end');
+        // }
+        // first();
+
+        // list of recipe Ids
+        // one recipe object
+        // Callback Hell
+        /*const recipe = () => {
+            setTimeout(() => {
+                let recipeIds = [13,93,46,89];
+                console.log(recipeIds);
+
+                setTimeout(recipeId => {
+                    let recipeDetails = {
+                        name : 'pizza',
+                        publisher : 'Shubham'
+                    };
+
+                    setTimeout(pub => {
+                        console.log(`Publisher is: ${pub}`);
+                    }, 1500, recipeDetails.publisher);
+
+                    console.log(`${recipeId} : Recipe name is ${recipeDetails.name} and Cook is ${recipeDetails.cook}!`);
+                }, 1500, recipeIds[2]);
+            }, 1500);
+        };
+
+        recipe();*/
+
+
+        // Promises
+        const getRecipeIds = new Promise((resolve, reject) => {
+            // this will be async call that will return recipeIds
+            setTimeout(() => {
+                resolve([13,93,46,89]);
+            }, 1500);
+        });
+
+        const getRecipeDetails = recipeId => {
+            return new Promise((resolve, reject) => {
+                setTimeout(ID => {
+                    resolve( {
+                        name : 'pizza',
+                        publisher : 'Shubham'
+                    });
+                }, 1500, recipeId);
+            }); 
+        };
+
+        const getPublisherDetails = publisher => {
+            return new Promise((resolve, reject) => {
+                setTimeout(pub => {
+                    resolve(pub);
+                    // reject(`Error while retrieving publisher Details`);
+                }, 1500, publisher);
+            })
+        }
+        // consumer/handler for promise
+        /*getRecipeIds
+        .then(recipeIds => {
+            console.log(recipeIds);
+            return getRecipeDetails(recipeIds[2]);
+        })
+        .then(recipeDetails => {
+            console.log(`Recipe name is ${recipeDetails.name} and Publisher is ${recipeDetails.publisher}!`);
+            return getPublisherDetails(recipeDetails.publisher);
+        })
+        .then(publisher => {
+            console.log(`Publisher is: ${publisher}`);
+        })
+        .catch(error => {
+            console.log(`Error! ${error}`)
+        });*/
+
+        // Promise to Async/Await
+        /*async function getRecipeAW() {
+            const recipeIds = await getRecipeIds;
+            console.log(recipeIds);
+
+            const recipeDetails = await getRecipeDetails(recipeIds[2]);
+            console.log(recipeDetails);
+
+            const publisherDetails = await getPublisherDetails(recipeDetails.publisher);
+            console.log(publisherDetails);
+
+            return recipeDetails;
+        }
+        getRecipeAW()
+        .then(result => {
+            console.log(result);
+        });*/
+
+        // AJAX call fetch and promise
+        /*const weatherForLocation = fetch('https://cors-anywhere.herokuapp.com/https://www.metaweather.com/api/location/44418/');
+        weatherForLocation
+        .then(result => {
+            console.log(result);
+            return result.json();
+        })
+        .then(res => {
+            const data = res.consolidated_weather[0];
+            console.log(res);
+            console.log(`Min: ${data.min_temp} and Max: ${data.max_temp}`);
+        }).catch(err => {
+            console.log('Error',err);
+        })*/
+
+        // Using async await
+        async function weatherForLocation(worldID) {
+            try{
+                const result = await fetch(`https://cors-anywhere.herokuapp.com/https://www.metaweather.com/api/location/${worldID}/`);
+
+                const jsonResponse = await result.json();
+                console.log(jsonResponse);
+                const weatherData = jsonResponse.consolidated_weather[0];
+                console.log(`${jsonResponse.title} - Min temp: ${weatherData.min_temp} and Max temp: ${weatherData.max_temp}`);
+                return jsonResponse;
+            }catch(error) {
+                console.log('Error', error);
+            } 
+        }
+
+        weatherForLocation(44418)
+        .then(data => {
+            console.log(data);
+        });
+    </script>
+</body>
+</html>
