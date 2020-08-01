@@ -1,10 +1,40 @@
-import str from './models/Search';
-import {add, multiply, ID} from './views/searchView';
-// import {add as a, multiply as m, ID as id} from './views/searchView.js';
-// import * as searchView from './views/searchView';
+import axios from 'axios';
 
-console.log(`Add = ${add(ID, 2)} and multiply = ${multiply(9, 8)}. Got string from Search model = ${str}`);
+async function callSearch(item) {
+    try{
+        const result = await axios(`https://forkify-api.herokuapp.com/api/search?q=${item}`);
+        console.log(result);
+    }catch(error) {
+        console.log(`Error occured: ${error}`);
+    }
+}
 
-// console.log(`Add = ${a(id, 2)} and multiply = ${m(9, 8)}. Got string from Search model = ${str}`);
+callSearch('Tomato');
 
-// console.log(`Add = ${searchView.add(searchView.ID, 2)} and multiply = ${searchView.multiply(9, 8)}. Got string from Search model = ${str}`)
+// using promise
+/*function makeCallToSearch(item) {
+    return fetch(`https://forkify-api.herokuapp.com/api/search?q=${item}`);
+}
+
+makeCallToSearch('pizza')
+    .then(result => {
+        return result.json();
+    })
+    .then(data => {
+        console.log(data)
+    });*/
+
+// using async await
+/*async function callToSearch(item) {
+    try{
+        const result = await fetch(`https://forkify-api.herokuapp.com/api/search?q=${item}`);
+        const data = await result.json();
+        console.log(data);
+    }catch(error) {
+        alert(error);
+    }
+}
+
+callToSearch('pizza');
+*/
+
