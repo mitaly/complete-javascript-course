@@ -1,0 +1,20 @@
+// babel configuration file
+{
+    // it is collection of loaders - used for transformations
+    "presets": [
+        [
+            // choosing the transformers set based on the environment
+            "@babel/env", {
+                "useBuiltIns": "usage",
+                "corejs": "3",
+                "targets": {
+                    "browsers": [
+                        // Apply the transformations to make compatible in last 5 versions of every browser
+                        "last 5 versions",
+                        "ie >= 8"
+                    ]
+                }
+            }
+        ]
+    ]
+}
