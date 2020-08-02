@@ -1,40 +1,44 @@
-import axios from 'axios';
+import {elements, renderLoader, removeLoader } from './views/base';
+import Search from './models/Search';
+import * as searchView from './views/searchView';
 
-async function callSearch(item) {
-    try{
-        const result = await axios(`https://forkify-api.herokuapp.com/api/search?q=${item}`);
-        console.log(result);
-    }catch(error) {
-        console.log(`Error occured: ${error}`);
-    }
-}
+/**
+ * State
+ *  - save the Search obj(query and result)
+ *  - save the current recipe
+ *  - save the liked recipes
+ *  - save the shopping list
+ */
+const state = {};
 
-callSearch('Tomato');
+const getRecipesControl = async () => {
+    const query = searchView.getRecipeQueryInput();
+    
+    // store the Search in state
+    state.search = new Search(query);
+    
+     // clear the input
+     searchView.clearRecipeQueryInput();
 
-// using promise
-/*function makeCallToSearch(item) {
-    return fetch(`https://forkify-api.herokuapp.com/api/search?q=${item}`);
-}
+     // clear the list
+     searchView.clearRecipeList();
+    
+     // show loader
+    renderLoader(elements.searchResults);
 
-makeCallToSearch('pizza')
-    .then(result => {
-        return result.json();
-    })
-    .then(data => {
-        console.log(data)
-    });*/
+    // getResults is async method - thus returns promise - thus, await - therefore getRecipesControl is async function too.
+    await state.search.getResults();
 
-// using async await
-/*async function callToSearch(item) {
-    try{
-        const result = await fetch(`https://forkify-api.herokuapp.com/api/search?q=${item}`);
-        const data = await result.json();
-        console.log(data);
-    }catch(error) {
-        alert(error);
-    }
-}
+    // remove loader
+    removeLoader();
 
-callToSearch('pizza');
-*/
+    // result has count and an array of recipe
+    // show the recipes in UI
+    searchView.populateRecipelist(state.search.result);
+};
 
+elements.searchRecipeForm.addEventListener('submit',event => {
+    // stops page reload- that is default behaviour on submit of form
+    event.preventDefault();
+    getRecipesControl();
+});
